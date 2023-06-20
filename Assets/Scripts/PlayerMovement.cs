@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,47 +26,55 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    // Once played or launched shesh
+    // PLAY/LAUNCH
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W)) 
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) //move up
         {
+            anim.enabled = true;//
             anim.SetTrigger("moveup");
         }
         if (Input.GetKeyUp(KeyCode.W))
         {
             anim.SetTrigger("Upause");
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))//move down
         {
+            anim.enabled = true;
             anim.SetTrigger("movedown");
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
             anim.SetTrigger("Dpause");
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))//move to the right
         {
+            anim.enabled = true;
             anim.SetTrigger("moveright");
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
             anim.SetTrigger("Rpause");
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))//move to the right
         {
+            anim.enabled = true;
             anim.SetTrigger("moveleft");
         }
         if (Input.GetKeyUp(KeyCode.A))
         {
             anim.SetTrigger("Lpause");
         }
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            anim.enabled = false;
+        }
 
     }
     //Fixed for physx kimi lang pre
     private void FixedUpdate()
     {
-        //pampagalaw ng player
+        //player  movement
         rigidBody.velocity = movementInput * moveSpeed;
     }
 
@@ -73,6 +82,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnMove(InputValue inputValue)
     {
         // When A is pressed
-        movementInput = inputValue.Get<Vector2>();  
+        movementInput = inputValue.Get<Vector2>();
     }
 }
