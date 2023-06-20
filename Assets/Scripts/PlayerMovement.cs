@@ -30,35 +30,35 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            anim.SetTrigger("Move Up");
+            anim.SetTrigger("moveup");
         }
         if (Input.GetKeyUp(KeyCode.W))
         {
-            anim.SetTrigger("up pause");
+            anim.SetTrigger("Upause");
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            anim.SetTrigger("Move Down");
+            anim.SetTrigger("movedown");
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
-            anim.SetTrigger("down pause");
+            anim.SetTrigger("Dpause");
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
-            anim.SetTrigger("Move Right");
+            anim.SetTrigger("moveright");
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            anim.SetTrigger("right pause");
+            anim.SetTrigger("Rpause");
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
-            anim.SetTrigger("Move Left");
+            anim.SetTrigger("moveleft");
         }
         if (Input.GetKeyUp(KeyCode.A))
         {
-            anim.SetTrigger("left pause");
+            anim.SetTrigger("Lpause");
         }
 
     }
