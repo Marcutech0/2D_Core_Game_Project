@@ -15,11 +15,12 @@ public class TrapBehavior : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) ;
         {
-            Animation.SetBool("isActive", true);
+           anim.SetBool("isActive", true);
+
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        Animation.SetBool("isActive", false);
+        anim.SetBool("isActive", false);
     }
 }
