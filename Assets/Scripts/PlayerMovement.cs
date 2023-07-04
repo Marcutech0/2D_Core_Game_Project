@@ -21,6 +21,9 @@ public class PlayerMovement : MonoBehaviour
     //coin collecting
     public int CoinCount;
 
+    //player healt
+    public int HealthPoints;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -94,10 +97,20 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("COIN_PREFAB"))
+        if (collision.gameObject.CompareTag("Speed"))
+        {
+            Transform col = collision.transform;
+            col.transform.position = new Vector2(999, 999);
+           
+        }
+        if (collision.CompareTag("COIN_PREFAB"))
+        {
+            CoinCount++;
+            Destroy(collision.gameObject);
+        }
+        if (collision.CompareTag("Health"))
         {
             Destroy(collision.gameObject);
-            CoinCount++;
         }
     }
 }
