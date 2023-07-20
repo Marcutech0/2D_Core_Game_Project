@@ -8,24 +8,34 @@ public class consumable : MonoBehaviour
     public int HealthRegen, SpeedBoost, Duration;
     private float basemovespeed;
     public PlayerMovement player;
+    private bool speedBoostApplied = false;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (Speed)
+        if (Speed && !speedBoostApplied)
         {
             player.moveSpeed += SpeedBoost;
+            speedBoostApplied = true;
             StartCoroutine(BackToBaseSpeed());
         }
-        if(Health)
+        if (Health)
         {
             player.HealthPoints += HealthRegen;
+
+            // Limit player's health to 100
+            if (player.HealthPoints > 100)
+            {
+                player.HealthPoints = 100;
+            }
         }
     }
+
     IEnumerator BackToBaseSpeed()
     {
+       
         yield return new WaitForSeconds(Duration);
         player.moveSpeed = basemovespeed;
-
+        speedBoostApplied = false;
     }
 
     // Start is called before the first frame update
@@ -37,6 +47,6 @@ public class consumable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

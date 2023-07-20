@@ -101,7 +101,7 @@ MonoBehaviour:
   Health: 0
   Speed: 1
   HealthRegen: 0
-  SpeedBoost: 2
+  SpeedBoost: 100
   Duration: 5
   player: {fileID: 0}
 --- !u!70 &6541004504413309047

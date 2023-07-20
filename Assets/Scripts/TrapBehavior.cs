@@ -16,22 +16,23 @@ public class TrapBehavior : MonoBehaviour
 
     //for the animation fix (player damage)
     public bool isPlayerOnTop;
+    public bool PlayerisDead;
     void Start()
     {
-        anim= GetComponent<Animator>();
+        anim = GetComponent<Animator>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        isPlayerOnTop= true;
+        isPlayerOnTop = true;
         if (collision.gameObject.CompareTag("Player")) ;
         {
-           anim.SetBool("isActive", true);
+            anim.SetBool("isActive", true);
 
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        isPlayerOnTop= false;
+        isPlayerOnTop = false;
         anim.SetBool("isActive", false);
     }
 
@@ -39,8 +40,8 @@ public class TrapBehavior : MonoBehaviour
     {
         if (isPlayerOnTop)
         {
-            player.HealthPoints -= TrapDamage;
+            player.HealthPoints = Mathf.Max(player.HealthPoints - TrapDamage, 0);
         }
     }
-        
+
 }

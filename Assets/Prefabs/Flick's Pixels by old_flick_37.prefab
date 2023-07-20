@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 1
   Speed: 0
-  HealthRegen: 50
+  HealthRegen: 40
   SpeedBoost: 0
   Duration: 0
   player: {fileID: 0}
