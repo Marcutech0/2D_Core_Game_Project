@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
         // Update the Player Health Points UI text
         private void UpdateHealthPointsText()
         {
-        healthPointsText.text = "Health: " + HealthPoints.ToString();
+        healthPointsText.text = "HP: " + HealthPoints.ToString();
         if (HealthPoints < 1)
         {
             StartCoroutine(DeathCoroutine());
