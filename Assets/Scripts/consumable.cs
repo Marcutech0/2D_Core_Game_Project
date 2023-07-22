@@ -33,7 +33,7 @@ public class consumable : MonoBehaviour
     IEnumerator BackToBaseSpeed()
     {
        
-        yield return new WaitForSeconds(Duration);
+        yield return new WaitForSeconds(5);
         player.moveSpeed = basemovespeed;
         speedBoostApplied = false;
     }

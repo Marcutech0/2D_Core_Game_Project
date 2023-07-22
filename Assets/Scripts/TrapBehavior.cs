@@ -2,46 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class TrapBehavior : MonoBehaviour
 {
     public Animator anim;
-    // Start is called before the first frame update
 
-    //trap damage to player
+    // Trap damage to player
     public int TrapDamage;
 
-    //new object calling the player script
+    // Reference to the player script
     public PlayerMovement player;
 
-    //for the animation fix (player damage)
+    // Check if player is on top of the trap
     public bool isPlayerOnTop;
-    public bool PlayerisDead;
+
+    // Check if the trap has already been triggered
+    private bool isTriggered = false;
+
+    // Duration of the trap animation
+    public float trapAnimationDuration = 10.0f;
+
+    // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        isPlayerOnTop = true;
-        if (collision.gameObject.CompareTag("Player")) ;
+        if (collision.gameObject.CompareTag("Player"))
         {
-            anim.SetBool("isActive", true);
+            isPlayerOnTop = true;
 
+            if (!isTriggered)
+            {
+                isTriggered = true;
+                StartCoroutine(TriggerTrap());
+            }
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
-        isPlayerOnTop = false;
-        anim.SetBool("isActive", false);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            isPlayerOnTop = false;
+        }
     }
 
-    public void playerdamage()
+    private IEnumerator TriggerTrap()
     {
+        anim.SetBool("isActive", true);
+
+        yield return new WaitForSeconds(trapAnimationDuration);
+
+        anim.SetBool("isActive", false);
+        isTriggered = false;
+
+        // Damage the player when the trap animation finishes
         if (isPlayerOnTop)
         {
             player.HealthPoints = Mathf.Max(player.HealthPoints - TrapDamage, 0);
         }
     }
-
 }
