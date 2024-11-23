@@ -8,18 +8,17 @@ using UnityEngine.UI;
 public class MMButtons : MonoBehaviour
 {
   
-public void playGame()
+    public void playGame()
     {
         SceneManager.LoadScene("2D Game Project");
 
     }
-    public void OnApplicationQuit()
+    public void QuitApp()
     {
         Application.Quit();
     }
-    public void Back()
+    public void BackToMainMenu()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        SceneManager.LoadScene("Main Menu");
     }
-   
 }

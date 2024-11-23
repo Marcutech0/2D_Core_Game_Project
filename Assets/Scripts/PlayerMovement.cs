@@ -7,134 +7,155 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // displaying coin count
-    public TextMeshProUGUI coinCountText;
-
-    // displaying player health points
-    public TextMeshProUGUI healthPointsText;
-
-    // Player speed
+    public Animator anim;
+    public Rigidbody2D rigidBody;
+    public int healthPoints = 1000;
+    public int maxHealth = 1000;
     public float moveSpeed;
 
-    // Rigid Body access
-    public Rigidbody2D rigidBody;
-
-    // Player movement
     private Vector2 movementInput;
+    private bool isDead = false;
 
-    // Player animations
-    public Animator anim;
+    public GameObject shieldPrefab; 
+    private GameObject activeShield;
+    public Transform ShieldSpawn;
+    public float shieldDuration = 15f;
+    private bool hasShield = false;
 
-    // Coin collecting
-    public int CoinCount;
+    public GameObject deathScreen;
 
-    // Private field for HealthPoints
-    private int healthPoints = 100;
-
-    // Property for HealthPoints
     public int HealthPoints
     {
         get { return healthPoints; }
         set
         {
-            // Clamp the value between 0 and 100
-            healthPoints = Mathf.Clamp(value, 0, 100);
-            // Update the UI text
-            UpdateHealthPointsText();
+            healthPoints = Mathf.Clamp(value, 0, 1000);
+            if (healthPoints == 0 && !isDead)
+            {
+                StartCoroutine(HandleDeath());
+            }
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        // Get references to the Rigidbody2D component and Animator component
         rigidBody = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
 
-        coinCountText = GameObject.Find("CoinCountText").GetComponent<TextMeshProUGUI>();
-        healthPointsText = GameObject.Find("HealthPointsText").GetComponent<TextMeshProUGUI>();
-
-        // Initialize the UI text with the starting values
-        UpdateCoinCountText();
-        UpdateHealthPointsText();
+        deathScreen.SetActive(false);
     }
 
-    // PLAY/LAUNCH
     void Update()
     {
-        anim.SetFloat("Horizontal", movementInput.x);
-        anim.SetFloat("Vertical", movementInput.y);
-        anim.SetFloat("Speed", movementInput.sqrMagnitude);
+        if (!isDead)
+        {
+            anim.SetFloat("Horizontal", movementInput.x);
+            anim.SetFloat("Vertical", movementInput.y);
+            anim.SetFloat("Speed", movementInput.sqrMagnitude);
+        }
     }
 
-    // Fixed for physics update
     private void FixedUpdate()
     {
-        // Player movement
-        rigidBody.velocity = movementInput * moveSpeed;
+        if (!isDead)
+        {
+            rigidBody.velocity = movementInput * moveSpeed;
+        }
+        else
+        {
+            rigidBody.velocity = Vector2.zero;
+        }
     }
 
-    // Input keybinds
     private void OnMove(InputValue inputValue)
     {
-        // Get the movement input
-        movementInput = inputValue.Get<Vector2>();
+        if (!isDead)
+        {
+            movementInput = inputValue.Get<Vector2>();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Speed"))
+        if (collision.CompareTag("Health"))
         {
-            // Move the collided object off-screen
-            collision.transform.position = new Vector2(999, 999);
-        }
-        else if (collision.CompareTag("COIN_PREFAB"))
-        {
-            CoinCount++;
             Destroy(collision.gameObject);
-            UpdateCoinCountText();
+            HealthPoints += 1000;
+        }
 
-            if (CoinCount == 36) 
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        isDead = true;
+        anim.SetTrigger("death");
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(2f);
+        deathScreen.SetActive(true);
+    }
+
+    public void ActivateShield()
+    {
+        if (activeShield == null) 
+        {
+            activeShield = new GameObject("ShieldParent"); 
+            activeShield.transform.position = transform.position; 
+
+            int shieldCount = 5; 
+            float angleStep = 360f / shieldCount; 
+            float shieldDistance = 150f;
+
+            for (int i = 0; i < shieldCount; i++)
             {
-                StartCoroutine(Win());
+                float angle = i * angleStep;
+                Vector2 shieldPosition = new Vector2(
+                    transform.position.x + Mathf.Cos(angle * Mathf.Deg2Rad) * shieldDistance,
+                    transform.position.y + Mathf.Sin(angle * Mathf.Deg2Rad) * shieldDistance
+                );
+
+                GameObject shield = Instantiate(shieldPrefab, shieldPosition, Quaternion.identity, activeShield.transform);
+
+                Rigidbody2D shieldRb = shield.GetComponent<Rigidbody2D>();
+                HingeJoint2D hinge = shield.GetComponent<HingeJoint2D>();
+
+                if (shieldRb != null && hinge != null)
+                {
+                    hinge.connectedBody = GetComponent<Rigidbody2D>();
+                    hinge.connectedAnchor = new Vector2(
+                        Mathf.Cos(angle * Mathf.Deg2Rad) * shieldDistance,
+                        Mathf.Sin(angle * Mathf.Deg2Rad) * shieldDistance
+                    );
+                }
             }
+            StartCoroutine(ShieldTimer());
         }
-        else if (collision.CompareTag("Health"))
-        {
-            Destroy(collision.gameObject);
-            HealthPoints += 10;
-        }
+    }
 
-        }
+    private IEnumerator ShieldTimer()
+    {
+        yield return new WaitForSeconds(shieldDuration);
+        DeactivateShield();
+    }
 
-        // Update the Coin Count UI text
-        private void UpdateCoinCountText()
+    public void DeactivateShield()
+    {
+        if (activeShield != null)
         {
-            coinCountText.text = "Coins Collected: " + "[" + CoinCount.ToString() + "/36]";
+            Destroy(activeShield); 
+            activeShield = null;  
         }
+        hasShield = false; 
+    }
 
-        // Update the Player Health Points UI text
-        private void UpdateHealthPointsText()
-        {
-        healthPointsText.text = "HP: " + HealthPoints.ToString();
-        if (HealthPoints < 1)
-        {
-            StartCoroutine(DeathCoroutine());
-        }
-        }   
+    public void TakeDamage(int damage)
+    {
+        healthPoints -= damage;
+        healthPoints = Mathf.Clamp(healthPoints, 0, maxHealth);
+    }
 
-        private IEnumerator DeathCoroutine()
-        {
-            rigidBody.bodyType = RigidbodyType2D.Static;
-            anim.SetTrigger("death");
-            yield return new WaitForSeconds(3.5f); 
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-        private IEnumerator Win()
-        {
-            rigidBody.bodyType = RigidbodyType2D.Static;
-            anim.SetTrigger("Win");
-            yield return new WaitForSeconds(3.5f);
-            SceneManager.LoadScene("WinScreen");
-        }
+    public void Heal(int healAmount)
+    {
+        healthPoints += healAmount;
+        healthPoints = Mathf.Clamp(healthPoints, 0, maxHealth);
+    }
 }

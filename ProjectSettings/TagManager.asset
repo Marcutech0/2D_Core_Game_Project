@@ -4,9 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - COIN_PREFAB
   - Health
   - Speed
+  - Wall
+  - Enemy
+  - PlayerBullet
+  - SpawnPoint
+  - EnemyBullet
+  - Pares
+  - ShieldPotion
+  - Empe
   layers:
   - Default
   - TransparentFX
@@ -14,7 +21,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - BackGround
   - 
   - 
   - 
